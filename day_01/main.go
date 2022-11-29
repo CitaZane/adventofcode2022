@@ -2,13 +2,13 @@ package main
 
 import (
 	"adventofcode2022/utils"
-	"fmt"
 )
 
-func main() {
-	nums := utils.ParseIntList(puzzle, "\n")
-	firstCount := firstMesurement(nums)
-	fmt.Println("Result -> ", firstCount)
+func run(input string) (interface{}, interface{}) {
+	nums := utils.ParseIntList(input, "\n")
+	solve1 := firstMesurement(nums)
+
+	return solve1, nil
 }
 
 func firstMesurement(data []int) int {
@@ -19,4 +19,8 @@ func firstMesurement(data []int) int {
 		}
 	}
 	return count
+}
+
+func main() {
+	utils.Run(run, puzzle)
 }
