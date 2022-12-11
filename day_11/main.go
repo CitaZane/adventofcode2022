@@ -8,17 +8,39 @@ import (
 )
 
 func main() {
-	utils.Run(run, testPuzzle)
+	utils.Run(run, puzzle)
 }
 
 func run(input string) (interface{}, interface{}) {
 	inspector := registerMonkeys(input)
 
-	postProcess1 := func(item int) int { return item / 3 }
-	inspector.InspectRounds(20, postProcess1)
-	solve1 := inspector.ActivityCount()
+	// postProcess1 := func(item int) int { return item / 3 }
+	// inspector.InspectRounds(20, postProcess1)
+	// solve1 := inspector.ActivityCount()
 
-	return solve1, nil
+	dividersLcm := 1
+	for _, m := range inspector.Monkeys {
+		dividersLcm = lcm(dividersLcm, m.Test)
+	}
+
+	postProcess2 := func(item int) int { return item % dividersLcm }
+	inspector.InspectRounds(10000, postProcess2)
+	solve2 := inspector.ActivityCount()
+
+	return nil, solve2
+}
+
+// gratest common divider
+func gcd(a, b int) int {
+	for b != 0 {
+		a, b = b, a%b
+	}
+
+	return a
+}
+// least common multiple
+func lcm(a, b int) int {
+	return a * b / gcd(a, b)
 }
 
 func registerMonkeys(input string) Inspector {
