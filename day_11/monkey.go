@@ -18,18 +18,23 @@ type Inspector struct {
 	Monkeys []*Monkey
 }
 
-func (i *Inspector) InspectRounds(rounds int) {
+func (i *Inspector) InspectRounds(rounds int, postProcess func(int) int) {
 	for round := 0; round < rounds; round++ {
 		for _, monkey := range i.Monkeys {
+			monkey.ActivityLevel += len(monkey.Items)
 			for j := 0; j < len(monkey.Items); j++ {
-				item, next := monkey.Inspect(j)
-				if next == -1 {
-					break
+				item := monkey.Inspect(j)
+				item = postProcess(item)
+
+				if item%monkey.Test == 0 {
+					i.Monkeys[monkey.PositiveThrow].addItem(item)
+				} else {
+					i.Monkeys[monkey.NegativeThrow].addItem(item)
 				}
-				i.Monkeys[next].addItem(item)
 				if j == len(monkey.Items)-1 {
 					monkey.Items = monkey.Items[j+1:]
 				}
+
 			}
 		}
 	}
@@ -50,18 +55,10 @@ func (m *Monkey) addItem(item int) {
 	m.Items = append(m.Items, item)
 }
 
-func (m *Monkey) Inspect(i int) (int, int) {
+func (m *Monkey) Inspect(i int) int {
 	if len(m.Items) == 0 {
-		return -1, -1
+		return -1
 	}
 	item := m.Items[i]
-	item = m.Operation(item)
-	item = item / 3
-	m.ActivityLevel += 1
-
-	if item%m.Test == 0 {
-		return item, m.PositiveThrow
-	} else {
-		return item, m.NegativeThrow
-	}
+	return m.Operation(item)
 }

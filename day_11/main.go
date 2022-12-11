@@ -8,17 +8,17 @@ import (
 )
 
 func main() {
-	utils.Run(run, puzzle)
+	utils.Run(run, testPuzzle)
 }
 
 func run(input string) (interface{}, interface{}) {
 	inspector := registerMonkeys(input)
-	inspector.InspectRounds(10000)
-	// solve1 := inspector.ActivityCount()
-	// fmt.Println(inspector)
-	solve2 := inspector.ActivityCount()
 
-	return solve2, nil
+	postProcess1 := func(item int) int { return item / 3 }
+	inspector.InspectRounds(20, postProcess1)
+	solve1 := inspector.ActivityCount()
+
+	return solve1, nil
 }
 
 func registerMonkeys(input string) Inspector {
